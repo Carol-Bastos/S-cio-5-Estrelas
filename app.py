@@ -1,12 +1,19 @@
 import streamlit as st
 import pandas as pd
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 st.set_page_config(page_title="Sócio 5 Estrelas", page_icon="🦊", layout="wide")
 
-if "efeito" not in st.session_state:
-    st.session_state.efeito = None
+BASE_DIR = os.path.dirname(__file__)
+
+def carregar_imagem(nome):
+    for ext in [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"]:
+        caminho = os.path.join(BASE_DIR, f"{nome}{ext}")
+        if os.path.exists(caminho):
+            return caminho
+    return None
+
 
 st.markdown("""
 <style>
@@ -21,7 +28,6 @@ st.markdown("""
     border-radius: 15px;
 }
 h1, h2, h3, p, span, label { color: white !important; }
-
 .fall, .joker {
     position: fixed;
     top: -50px;
@@ -36,16 +42,15 @@ h1, h2, h3, p, span, label { color: white !important; }
 </style>
 """, unsafe_allow_html=True)
 
-def carregar_imagem(nome_base):
-    for ext in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
-        caminho = f"{nome_base}{ext}"
-        if os.path.exists(caminho):
-            return caminho
-    return None
-
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/b/bc/Cruzeiro_Esporte_Clube_logo.svg", width=80)
     st.title("Painel do Sócio")
+    st.subheader("🗓️ Próximo Jogo")
+
+    data_jogo = datetime(2026, 2, 8, 16, 0, tzinfo=timezone.utc)
+    agora = datetime.now(timezone.utc)
+    dias_restantes = max(0, (data_jogo - agora).days)
+
+    st.metric("Dias para o Clássico", dias_restantes)
 
 st.markdown("<h1 style='text-align:center;'>Sócio 5 estrelas by Carol Bastos</h1>", unsafe_allow_html=True)
 
@@ -62,15 +67,15 @@ with col1:
     img = carregar_imagem("gerson")
     if img: st.image(img, use_container_width=True)
     st.write("💰 R$ 21,00/mês")
-    if st.button("Assinar Estrelas do Povo", key="povo", use_container_width=True):
-        st.session_state.efeito = "joker"
+    if st.button("Assinar Estrelas do Povo", use_container_width=True):
+        st.toast("🃏 Modo Coringa ativado!")
 
 with col2:
     st.subheader("Cruzeiro Sempre")
     img = carregar_imagem("mp10")
     if img: st.image(img, use_container_width=True)
     st.write("💰 R$ 62,00/mês")
-    if st.button("Assinar Cruzeiro Sempre", key="sempre", use_container_width=True):
+    if st.button("Assinar Cruzeiro Sempre", use_container_width=True):
         st.snow()
 
 with col3:
@@ -78,32 +83,27 @@ with col3:
     img = carregar_imagem("kaio")
     if img: st.image(img, use_container_width=True)
     st.write("💰 R$ 150,00/mês")
-    if st.button("Assinar K-abuloso Max", key="max", use_container_width=True):
-        st.session_state.efeito = "gol"
+    if st.button("Assinar K-abuloso Max", use_container_width=True):
+        st.toast("⚽ GOOOOOL DO CABULOSO!")
 
 st.divider()
 
-col_esq, col_dir = st.columns([2,1])
+st.header("📊 Crescimento de Sócios")
+dados = pd.DataFrame({
+    'Mês':['Jan','Fev','Mar','Abr','Mai','Jun'],
+    'Novos Sócios':[4500,5200,6100,5800,7500,9000]
+})
+st.bar_chart(dados.set_index('Mês'))
 
-with col_esq:
-    st.header("📊 Crescimento de Sócios")
-    dados = pd.DataFrame({'Mês':['Jan','Fev','Mar','Abr','Mai','Jun'],'Novos Sócios':[4500,5200,6100,5800,7500,9000]})
-    st.bar_chart(dados.set_index('Mês'))
-
-    st.header("📖 Nossa História")
-    with st.expander("⭐ História do Clube"):
-        st.write("""
-A história do Cruzeiro Esporte Clube começa em 2 de janeiro de 1921...
-(continua sua história completa aqui igual antes)
-""")
+st.header("📖 Nossa História")
+with st.expander("⭐ Fundação e Glórias"):
+    st.write("O Cruzeiro foi fundado em 1921 e se tornou um dos maiores clubes do Brasil.")
 
 img = carregar_imagem("raposao")
 if img: st.image(img, width=500)
 
-with st.expander("⭐ 2003 - Tríplice Coroa"):
-    st.write("""
-A Tríplice Coroa do Cruzeiro refere-se ao feito histórico de 2003...
-""")
+with st.expander("⭐ Tríplice Coroa 2003"):
+    st.write("Em 2003 o Cruzeiro conquistou Mineiro, Copa do Brasil e Brasileirão.")
 
 img = carregar_imagem("fototrofeu")
 if img: st.image(img, width=500)
@@ -111,42 +111,10 @@ if img: st.image(img, width=500)
 st.header("📍 Nossa Casa")
 st.map(pd.DataFrame({'lat':[-19.8659],'lon':[-43.9711]}))
 
-with col_dir:
-    st.header("🏟️ Check-in")
-    with st.form("check"):
-        setor = st.selectbox("Setor do Estádio", ["Amarelo","Laranja","Vermelho","Roxo"])
-        if st.form_submit_button("Confirmar Presença"):
-            st.toast("Check-in feito!")
-
-    st.header("💬 Mural Azul")
-    with st.form("mural"):
-        nome = st.text_input("Seu Nome")
-        msg = st.text_area("Mensagem")
-        if st.form_submit_button("Postar"):
-            st.success("Mensagem postada!")
-
-# EFEITOS VISUAIS CONTROLADOS
-if st.session_state.efeito == "joker":
-    st.toast("🃏 Modo Coringa ativado!")
-    st.markdown("""
-    <div class="joker" style="left:10%; animation-duration:3s;">🃏</div>
-    <div class="joker" style="left:20%; animation-duration:4s;">🃏</div>
-    <div class="joker" style="left:30%; animation-duration:5s;">🃏</div>
-    <div class="joker" style="left:40%; animation-duration:3.5s;">🃏</div>
-    """, unsafe_allow_html=True)
-
-elif st.session_state.efeito == "gol":
-    st.toast("⚽ GOOOOOL DO CABULOSO!")
-    st.markdown("""
-    <div class="fall" style="left:5%; animation-duration:3s;">⚽</div>
-    <div class="fall" style="left:15%; animation-duration:4s;">GOL</div>
-    <div class="fall" style="left:25%; animation-duration:5s;">⚽</div>
-    <div class="fall" style="left:35%; animation-duration:3.5s;">GOL</div>
-    <div class="fall" style="left:45%; animation-duration:4.5s;">⚽</div>
-    """, unsafe_allow_html=True)
-
 st.markdown("---")
 st.write("© 2026 - Desenvolvido com 💙 por Carol Bastos")
+
+
 
 
 
