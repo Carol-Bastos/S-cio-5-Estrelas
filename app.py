@@ -96,14 +96,46 @@ dados = pd.DataFrame({
 st.bar_chart(dados.set_index('Mês'))
 
 st.header("📖 Nossa História")
-with st.expander("⭐ Fundação e Glórias"):
-    st.write("O Cruzeiro foi fundado em 1921 e se tornou um dos maiores clubes do Brasil.")
+
+with st.expander("⭐ 1921 - Fundação"):
+    st.write("""
+A história do Cruzeiro Esporte Clube começa em 2 de janeiro de 1921, em Belo Horizonte, fundado pela colônia italiana como **Societá Sportiva Palestra Itália**, usando as cores verde e vermelho.  
+
+Em 1942, durante a Segunda Guerra Mundial, o clube foi obrigado a mudar de nome e passou a se chamar **Cruzeiro Esporte Clube**, adotando o azul e branco e o símbolo do **Cruzeiro do Sul**.
+
+O clube se tornou um dos maiores do Brasil e do mundo, conquistando títulos nacionais e internacionais e sendo eleito o **Melhor Clube Brasileiro do Século XX (IFFHS)**.
+
+**Principais Marcos:**
+- Fundação: 2 de janeiro de 1921  
+- Mudança de Nome: 1942  
+- Cores: Azul e branco  
+- Mascote: A Raposa  
+- Reconhecimento internacional pela grandeza e tradição  
+
+**Títulos de Destaque:**
+- Libertadores: 1976 e 1997  
+- Brasileirão: 1966, 2003, 2013, 2014  
+- Copa do Brasil: 1993, 1996, 2000, 2003, 2017, 2018  
+""")
+
 
 img = carregar_imagem("raposao")
 if img: st.image(img, width=500)
 
-with st.expander("⭐ Tríplice Coroa 2003"):
-    st.write("Em 2003 o Cruzeiro conquistou Mineiro, Copa do Brasil e Brasileirão.")
+with st.expander("⭐ 2003 - Tríplice Coroa"):
+    st.write("""
+A **Tríplice Coroa do Cruzeiro** foi um feito histórico em 2003, quando o clube conquistou:
+
+- Campeonato Mineiro  
+- Copa do Brasil  
+- Campeonato Brasileiro  
+
+Tudo no **mesmo ano** — algo inédito no futebol brasileiro.
+
+O time, comandado por **Vanderlei Luxemburgo**, tinha craques como **Alex**, **Deivid**, **Aristizábal** e **Mota**, e ficou marcado pelo futebol ofensivo, envolvente e extremamente eficiente.
+
+O Cruzeiro fez 100 pontos no Brasileirão, um recorde na época, consolidando uma das maiores temporadas da história do futebol nacional.
+""")
 
 img = carregar_imagem("fototrofeu")
 if img: st.image(img, width=500)
@@ -113,6 +145,7 @@ st.map(pd.DataFrame({'lat':[-19.8659],'lon':[-43.9711]}))
 
 st.markdown("---")
 st.write("© 2026 - Desenvolvido com 💙 por Carol Bastos")
+
 
 
 
